@@ -1,0 +1,10 @@
+{
+    "default": {
+        "url": "http://gitlab.domain.com",
+        "api_token": "a0a0a0a0a0a0a0a0a0a"
+    },
+    "reno": {
+        "url": "http://gitlab.anotherdomain.com",
+        "api_token": "b1b1b1b1b1b1b1b1b1b"
+    }
+}
