@@ -4,4 +4,4 @@
  */
 
 $conf['server.default'] = 'http://my-gitlab.com';
-$conf['token.default'] = ''
+$conf['token.default'] = '';
