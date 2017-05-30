@@ -1,0 +1,14 @@
+img.gitlab {
+    height: 1.5em;
+    width: 1.5em;
+    margin-bottom: 0.5em;
+    margin-right: 0.5em;
+}
+
+a.gitlab {
+    font-size: 1.4em;
+}
+
+b.gitlab {
+    font-size: 1.2em;
+}

@@ -1,6 +1,7 @@
 <?php
 /*
  * Gitlab Access
+ * @author Algorys
  */
 
 class DokuwikiGitlab {
@@ -10,22 +11,43 @@ class DokuwikiGitlab {
 
     function __construct($url, $token) {
         $this->client = new DokuHTTPClient(); 
-        $this->url_api = $url . '/api/v3/projects/';
+        $this->url_api = $url . '/api/v3/';
         $this->token = $token;
-        $test = new DokuHTTPClient();
     }
 
-    function displayVar() {
-        print_r($this->client);
-        print_r($this->url_api);
-        print_r($this->token);
-    }
-
-    function getProject($project_id) {
-        $project_encoded = urlencode($project_id);
-        $url_project = $this->url_api . $project_encoded . '/?private_token=' . $this->token;
-        $project = json_decode($this->client->get($url_project, true));
+    function getProject($project) {
+        $url_project = $this->url_api . 'projects/' . urlencode($project) . '/?private_token=' . $this->token;
+        $project = json_decode($this->client->get($url_project), true);
 
         return $project;
+    }
+
+    function getProjectMembers($project, $kind) {
+        if (strcmp($kind, 'user') == 0) {
+            $url_project = $this->url_api . 'projects/' . urlencode($project) . '/members/?private_token=' . $this->token;
+        } else {
+            $namespace = explode('/', $project)[0];
+            $url_project = $this->url_api . 'groups/' . urlencode($namespace) . '/members/?private_token=' . $this->token;
+        }
+        $members = json_decode($this->client->get($url_project), true);
+
+        return $members;
+    }
+
+    function getRole($role_nb) {
+        $roles = array(
+            10 => Guest,
+            20 => Reporter,
+            30 => Developer,
+            40 => Master,
+            50 => Owner
+        );
+        return $roles[$role_nb];
+    }
+
+    function getProjectActivity($project) {
+        $url_request = $this->url_api . 'projects/' . urlencode($project) . '/repository/commits/?private_token=' . $this->token;
+
+        $commits = json_decode($this->client->get($url_request), true);
     }
 }

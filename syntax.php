@@ -100,14 +100,28 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
     }
 
     function renderGitlab($renderer, $data) {
+        // Get gitlab data
         $gitlab = new DokuwikiGitlab($data['server'], $data['token']);
         $project = $gitlab->getProject($data['project']);
-        print_r($project);
-        /*$req_url = 'http://gitlab.alpi-net.com/api/v3/projects/23/members/?private_token=8aXssVpJmyrsMLhY8Yfp';
-        $members = json_decode($http->get($req_url), true);
-        print_r($members);
-        $renderer->doc .= '<div>';
-        $renderer->doc .= 'My Gitlab Server : '.$data['server'];
-        $renderer->doc .= '</div>';*/
+        $kind = $project['namespace']['kind'];
+        $members = $gitlab->getProjectMembers($data['project'], $kind);
+        
+        $img_url = 'lib/plugins/gitlabproject/images/gitlab.png';
+        $project_url = $project['web_url'];
+        $project_name = $project['name'];
+
+        // Renderer
+        $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
+        $renderer->doc .= '<b class="gitlab">Project:</b> <a href="'.$project_url.'" class="gitlab">'.$project_name.'</a>';
+        $renderer->doc .= '<p>Members:';
+        $total_members = count($members);
+        $i = 0;
+        foreach ($members as $key => $member) {
+            $i++;
+            $renderer->doc .= ' <a href="'.$member['web_url'].'">'.$member['username'].'</a> ';
+            $renderer->doc .= '('.$gitlab->getRole($member['access_level']).')';
+            if ($i != $total_members) $renderer->doc .= ',';
+        }
+        $gitlab->getProjectActivity($data['project']);
     }
 }
