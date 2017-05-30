@@ -112,8 +112,11 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
 
         // Renderer
         $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
-        $renderer->doc .= '<b class="gitlab">Project:</b> <a href="'.$project_url.'" class="gitlab">'.$project_name.'</a>';
-        $renderer->doc .= '<p>Members:';
+        $renderer->doc .= '<b class="gitlab">Project Gitlab</b><br>';
+        $renderer->doc .= '<a href="'.$project_url.'" class="gitlab">'.$project_name.'</a>';
+        $renderer->doc .= ' - <b>Namespace:</b> '.$project['namespace']['name'];
+        $renderer->doc .= '<p><b>Last activity:</b> '.$project['last_activity_at'].'</p>';
+        $renderer->doc .= '<p><b>Members:</b>';
         $total_members = count($members);
         $i = 0;
         foreach ($members as $key => $member) {
@@ -122,6 +125,6 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
             $renderer->doc .= '('.$gitlab->getRole($member['access_level']).')';
             if ($i != $total_members) $renderer->doc .= ',';
         }
-        $gitlab->getProjectActivity($data['project']);
+        $renderer->doc .= '</p>';
     }
 }
