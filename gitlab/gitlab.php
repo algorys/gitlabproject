@@ -16,20 +16,20 @@ class DokuwikiGitlab {
     }
 
     function getProject($project) {
-        $url_project = $this->url_api . 'projects/' . urlencode($project) . '/?private_token=' . $this->token;
-        $project = json_decode($this->client->get($url_project), true);
-
+        $url_request = $this->url_api . 'projects/' . urlencode($project) . '/?private_token=' . $this->token;
+        $project = json_decode($this->client->get($url_request), true);
+        print_r($project);
         return $project;
     }
 
     function getProjectMembers($project, $kind) {
         if (strcmp($kind, 'user') == 0) {
-            $url_project = $this->url_api . 'projects/' . urlencode($project) . '/members/?private_token=' . $this->token;
+            $url_request = $this->url_api . 'projects/' . urlencode($project) . '/members/?private_token=' . $this->token;
         } else {
             $namespace = explode('/', $project)[0];
-            $url_project = $this->url_api . 'groups/' . urlencode($namespace) . '/members/?private_token=' . $this->token;
+            $url_request = $this->url_api . 'groups/' . urlencode($namespace) . '/members/?private_token=' . $this->token;
         }
-        $members = json_decode($this->client->get($url_project), true);
+        $members = json_decode($this->client->get($url_request), true);
 
         return $members;
     }
@@ -45,9 +45,4 @@ class DokuwikiGitlab {
         return $roles[$role_nb];
     }
 
-    function getProjectActivity($project) {
-        $url_request = $this->url_api . 'projects/' . urlencode($project) . '/repository/commits/?private_token=' . $this->token;
-
-        $commits = json_decode($this->client->get($url_request), true);
-    }
 }
