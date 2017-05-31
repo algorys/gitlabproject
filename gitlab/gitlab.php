@@ -18,7 +18,7 @@ class DokuwikiGitlab {
     function getProject($project) {
         $url_request = $this->url_api . 'projects/' . urlencode($project) . '/?private_token=' . $this->token;
         $project = json_decode($this->client->get($url_request), true);
-        print_r($project);
+
         return $project;
     }
 
