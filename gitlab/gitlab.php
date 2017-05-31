@@ -6,35 +6,39 @@
 
 class DokuwikiGitlab {
     public $client;
-    public $url_api;
-    public $token;
+    public $data;
 
-    function __construct($url, $token) {
+    function __construct($dw_data) {
         $this->client = new DokuHTTPClient(); 
-        $this->url_api = $url . '/api/v3/';
-        $this->token = $token;
+        $this->dw_data = $dw_data;
     }
 
-    function getProject($project) {
-        $url_request = $this->url_api . 'projects/' . urlencode($project) . '/?private_token=' . $this->token;
+    function getAPIUrl() {
+        return $this->dw_data['server'] . '/api/v3/';
+    }
+
+    function getProject() {
+        $url_request = $this->getAPIUrl().'projects/'.urlencode($this->dw_data['project']).'/?private_token='.$this->dw_data['token'];
         $project = json_decode($this->client->get($url_request), true);
 
         return $project;
     }
 
-    function getProjectMembers($project, $kind) {
+    function getProjectMembers($kind) {
+        // Check if 'user' or 'group'
         if (strcmp($kind, 'user') == 0) {
-            $url_request = $this->url_api . 'projects/' . urlencode($project) . '/members/?private_token=' . $this->token;
+            $url_request = $this->getAPIUrl().'projects/'.urlencode($this->dw_data['project']).'/members/?private_token='.$this->dw_data['token'];
         } else {
-            $namespace = explode('/', $project)[0];
-            $url_request = $this->url_api . 'groups/' . urlencode($namespace) . '/members/?private_token=' . $this->token;
+            $namespace = explode('/', $this->dw_data['project'])[0];
+            $url_request = $this->getAPIUrl().'groups/'.urlencode($namespace).'/members/?private_token='.$this->dw_data['token'];
         }
+
         $members = json_decode($this->client->get($url_request), true);
 
         return $members;
     }
 
-    function getRole($role_nb) {
+    function getRoleName($role_nb) {
         $roles = array(
             10 => Guest,
             20 => Reporter,

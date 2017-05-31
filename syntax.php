@@ -101,29 +101,30 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
 
     function renderGitlab($renderer, $data) {
         // Get gitlab data
-        $gitlab = new DokuwikiGitlab($data['server'], $data['token']);
-        $project = $gitlab->getProject($data['project']);
+        $gitlab = new DokuwikiGitlab($data);
+        $project = $gitlab->getProject();
         $kind = $project['namespace']['kind'];
-        $members = $gitlab->getProjectMembers($data['project'], $kind);
+        $members = $gitlab->getProjectMembers($kind);
         
         $img_url = 'lib/plugins/gitlabproject/images/gitlab.png';
         $project_url = $project['web_url'];
         $project_name = $project['name'];
         $date_time = $this->getDateTime($project['last_activity_at']);
+        $namespace = $project['namespace']['name'];
 
         // Renderer
         $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
         $renderer->doc .= '<b class="gitlab">'.$this->getLang('gitlab.project').'</b><br>';
         $renderer->doc .= '<a href="'.$project_url.'" class="gitlab">'.$project_name.'</a>';
-        $renderer->doc .= ' - <b>Namespace:</b> '.$project['namespace']['name'];
-        $renderer->doc .= '<p><b>'.$this->getLang('gitlab.activity').':</b> '.$date_time['date'].' at '.$date_time['time'].'</p>';
+        $renderer->doc .= ' - <b>Namespace:</b> <a href="'.$data['server'].'/'.$namespace.'"> '.$namespace.'</a>';
+        $renderer->doc .= '<p><b>'.$this->getLang('gitlab.activity').':</b> '.$date_time['date'].' - '.$date_time['time'].'</p>';
         $renderer->doc .= '<p><b>'.$this->getLang('gitlab.members').':</b>';
         $total_members = count($members);
         $i = 0;
         foreach ($members as $key => $member) {
             $i++;
             $renderer->doc .= ' <a href="'.$member['web_url'].'">'.$member['username'].'</a> ';
-            $renderer->doc .= '('.$gitlab->getRole($member['access_level']).')';
+            $renderer->doc .= '('.$gitlab->getRoleName($member['access_level']).')';
             if ($i != $total_members) $renderer->doc .= ',';
         }
         $renderer->doc .= '</p>';
