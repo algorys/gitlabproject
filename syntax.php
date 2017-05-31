@@ -113,8 +113,10 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
         $namespace = $project['namespace']['name'];
 
         // Renderer
+        $renderer->doc .= '<div class="gitlab">';
         $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
         $renderer->doc .= '<b class="gitlab">'.$this->getLang('gitlab.project').'</b><br>';
+        $renderer->doc .= '<hr class="gitlab">';
         $renderer->doc .= '<a href="'.$project_url.'" class="gitlab">'.$project_name.'</a>';
         $renderer->doc .= ' - <b>Namespace:</b> <a href="'.$data['server'].'/'.$namespace.'"> '.$namespace.'</a>';
         $renderer->doc .= '<p><b>'.$this->getLang('gitlab.activity').':</b> '.$date_time['date'].' - '.$date_time['time'].'</p>';
@@ -128,6 +130,7 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
             if ($i != $total_members) $renderer->doc .= ',';
         }
         $renderer->doc .= '</p>';
+        $renderer->doc .= '</div>';
     }
 
     function getDateTime($activity_time) {
