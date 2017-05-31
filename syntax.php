@@ -109,14 +109,15 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
         $img_url = 'lib/plugins/gitlabproject/images/gitlab.png';
         $project_url = $project['web_url'];
         $project_name = $project['name'];
+        $date_time = $this->getDateTime($project['last_activity_at']);
 
         // Renderer
         $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
-        $renderer->doc .= '<b class="gitlab">Project Gitlab</b><br>';
+        $renderer->doc .= '<b class="gitlab">'.$this->getLang('gitlab.project').'</b><br>';
         $renderer->doc .= '<a href="'.$project_url.'" class="gitlab">'.$project_name.'</a>';
         $renderer->doc .= ' - <b>Namespace:</b> '.$project['namespace']['name'];
-        $renderer->doc .= '<p><b>Last activity:</b> '.$project['last_activity_at'].'</p>';
-        $renderer->doc .= '<p><b>Members:</b>';
+        $renderer->doc .= '<p><b>'.$this->getLang('gitlab.activity').':</b> '.$date_time['date'].' at '.$date_time['time'].'</p>';
+        $renderer->doc .= '<p><b>'.$this->getLang('gitlab.members').':</b>';
         $total_members = count($members);
         $i = 0;
         foreach ($members as $key => $member) {
@@ -126,5 +127,12 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
             if ($i != $total_members) $renderer->doc .= ',';
         }
         $renderer->doc .= '</p>';
+    }
+
+    function getDateTime($activity_time) {
+        $date_exploded = explode('T', $activity_time);
+        $time_exploded = explode('Z', $date_exploded[1]);
+
+        return ['date' => $date_exploded[0], 'time' => substr($time_exploded[0], 0, -4)];
     }
 }
