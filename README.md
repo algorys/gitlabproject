@@ -15,9 +15,9 @@ Download Gitlab Project into your `${dokuwiki_root}/lib/plugins` folder and rest
 You can configure Gitlab-Project in the Configuration Manager of Dokuwiki:
 
 * **server.default**: Set your default Gitlab url, without slash ending. You can override this setting in `server.json` file.
-* **token.default**: Fill your admin token. You can ovveride this setting in `server.json` file.
+* **token.default**: Fill your admin token. You can override this setting in `server.json` file.
 
-Gitlab-Project will use these data as default.
+Gitlab-Project will use this data by default.
 
 ## Syntax
 
@@ -39,13 +39,13 @@ For e.g., if you have a project available at `http://my-gitlab/foo/bar`, the syn
 
 ### Override Server and Token
 
-Inside the root of the plugin, you will have a JSON file called: `server.json`. Inside you can add other serversi and their tokens, than the one defined in the plugin settings.
+Inside the root of the plugin, you will have a JSON file called: `server.json`. Inside you can add other servers and their tokens, than the one defined in the plugin settings.
 
 Just call it after by its name.
 
 E.g.:
 
-With the following json file:
+Say that you've the following json file:
 
 ```json
 {
@@ -63,5 +63,5 @@ With the following json file:
 Then simply add `server` parameter:
 
 ```php
-<gitlab server="second" project="fooz/baz" />
+<gitlab server="second" project="foo/bar" />
 ```
