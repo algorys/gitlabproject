@@ -26,14 +26,18 @@ class DokuwikiGitlab {
 
     function getProjectMembers($kind) {
         // Check if 'user' or 'group'
-        if (strcmp($kind, 'user') == 0) {
-            $url_request = $this->getAPIUrl().'projects/'.urlencode($this->dw_data['project']).'/members/?private_token='.$this->dw_data['token'];
-        } else {
-            $namespace = explode('/', $this->dw_data['project'])[0];
-            $url_request = $this->getAPIUrl().'groups/'.urlencode($namespace).'/members/?private_token='.$this->dw_data['token'];
-        }
+        $user_url_request = $url_request = $this->getAPIUrl().'projects/'.urlencode($this->dw_data['project']).'/members/?private_token='.$this->dw_data['token'];
 
-        $members = json_decode($this->client->get($url_request), true);
+        $namespace = explode('/', $this->dw_data['project'])[0];
+        $group_url_request = $this->getAPIUrl().'groups/'.urlencode($namespace).'/members/?private_token='.$this->dw_data['token'];
+
+        $user_members = json_decode($this->client->get($user_url_request), true);
+        $group_members = json_decode($this->client->get($group_url_request), true);
+
+        print_r($user_members);
+        print_r($group_members);
+
+        $members = array_merge($user_members, $group_members);
 
         return $members;
     }
