@@ -16,6 +16,7 @@ You can configure Gitlab-Project in the Configuration Manager of Dokuwiki:
 
 * **server.default**: Set your default Gitlab url, without slash ending. You can override this setting in `server.json` file.
 * **token.default**: Fill your admin token. You can override this setting in `server.json` file.
+* **unwanted.users**: If you want to not display some users of your project, add them here, separated by commas.
 
 Gitlab-Project will use this data by default.
 
