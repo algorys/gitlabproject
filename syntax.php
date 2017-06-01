@@ -100,17 +100,22 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
     }
 
     function renderGitlab($renderer, $data) {
-        // Get gitlab data
+        // Gitlab object
         $gitlab = new DokuwikiGitlab($data);
+
+        // Project
         $project = $gitlab->getProject();
-        $kind = $project['namespace']['kind'];
-        $members = $gitlab->getProjectMembers($kind);
-        
-        $img_url = 'lib/plugins/gitlabproject/images/gitlab.png';
         $project_url = $project['web_url'];
         $project_name = $project['name'];
         $date_time = $this->getDateTime($project['last_activity_at']);
         $namespace = $project['namespace']['name'];
+
+        // Members
+        $kind = $project['namespace']['kind'];
+        $unwanted_members = $this->getConf('unwanted.users');
+        $members = $gitlab->getProjectMembers($kind, $unwanted_members);
+        
+        $img_url = 'lib/plugins/gitlabproject/images/gitlab.png';
 
         // Renderer
         $renderer->doc .= '<div class="gitlab">';
