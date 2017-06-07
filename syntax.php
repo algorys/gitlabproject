@@ -136,6 +136,8 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
         }
         $renderer->doc .= '</p>';
         $renderer->doc .= '</div>';
+
+        $gitlab->closeClient();
     }
 
     function getDateTime($activity_time) {
