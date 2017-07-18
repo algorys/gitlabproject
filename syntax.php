@@ -107,6 +107,10 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
         $project = $gitlab->getProject();
         $project_url = $project['web_url'];
         $project_name = $project['name'];
+        if(empty($project)) {
+            $this->renderProjectError($renderer, $data);
+            return array('state'=>$state, 'bytepos_end' => $pos + strlen($match));
+        }
         $date_time = $this->getDateTime($project['last_activity_at']);
         $namespace = $project['namespace']['name'];
 
@@ -114,6 +118,10 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
         $kind = $project['namespace']['kind'];
         $unwanted_members = $this->getConf('unwanted.users');
         $members = $gitlab->getProjectMembers($kind, $unwanted_members);
+        if(array_key_exists("message", $members)) {
+            $this->renderProjectError($renderer, $data);
+            return array('state'=>$state, 'bytepos_end' => $pos + strlen($match));
+        }
         
         $img_url = 'lib/plugins/gitlabproject/images/gitlab.png';
 
@@ -138,6 +146,17 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
         $renderer->doc .= '</div>';
 
         $gitlab->closeClient();
+    }
+
+    function renderProjectError($renderer, $data) {
+        // Renderer
+        $img_url = 'lib/plugins/gitlabproject/images/gitlab.png';
+        $renderer->doc .= '<div class="gitlab">';
+        $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
+        $renderer->doc .= '<b class="gitlab">'.$this->getLang('gitlab.project').'</b><br>';
+        $renderer->doc .= '<hr class="gitlab">';
+        $renderer->doc .= '<p>'.$this->getLang('gitlab.error').'</p>';
+        $renderer->doc .= '</div>';
     }
 
     function getDateTime($activity_time) {

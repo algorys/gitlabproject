@@ -59,15 +59,19 @@ class DokuwikiGitlab {
         if (isset($group_members['message'])) {
             $members = $user_members;
         } else {
-            $members = array_merge($user_members, $group_members);
+            if (is_array($user_members)) {
+                $members = array_merge($user_members, $group_members);
+            }
         }
 
             // Remove unwanted members
         $unwanted_members = explode(',', $unwanted_members);
         foreach ($unwanted_members as $unwanted_key => $unwanted_member) {
-            foreach ($members as $key => $member) {
-                if($member['username'] == trim($unwanted_member)) {
-                    unset($members[$key]);
+            if (is_array($members) && !empty($members)) {
+                foreach ($members as $key => $member) {
+                    if($member['username'] == trim($unwanted_member)) {
+                        unset($members[$key]);
+                    }
                 }
             }
         }
