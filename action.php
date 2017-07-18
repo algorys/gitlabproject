@@ -1,6 +1,6 @@
 <?php
 /**
- * Redissue Action Plugin: Inserts a button into the toolbar
+ * GitlabProject Action Plugin: Inserts a button into the toolbar
  *
  * @author Algorys
  */
