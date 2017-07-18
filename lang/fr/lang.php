@@ -10,4 +10,4 @@ $lang['gitlab.project'] = 'Projet Gitlab';
 $lang['gitlab.activity'] = 'Derni&egrave;re activit&eacute;';
 $lang['gitlab.members'] = 'Membres';
 
-$lang['gitlab.error'] = 'V&eacute;rifiez votre <b>namespace</b> et le <b>nom de votre projet</b>. Assurez-vous d\'avoir bien configur&eacute; le bon serveur et le bon token !'
+$lang['gitlab.error'] = 'V&eacute;rifiez votre <b>namespace</b> et le <b>nom de votre projet</b>. Assurez-vous d\'avoir bien configur&eacute; le bon serveur et le bon token !';
