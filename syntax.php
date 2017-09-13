@@ -123,7 +123,7 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
             return array('state'=>$state, 'bytepos_end' => $pos + strlen($match));
         }
         
-        $img_url = 'lib/plugins/gitlabproject/images/gitlab.png';
+        $img_url = DOKU_URL . 'lib/plugins/gitlabproject/images/gitlab.png';
 
         // Renderer
         $renderer->doc .= '<div class="gitlab">';
