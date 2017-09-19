@@ -66,3 +66,5 @@ Then simply add `server` parameter:
 ```php
 <gitlab server="second" project="foo/bar" />
 ```
+
+For further information, see also this plugins on [dokuwiki.org](https://www.dokuwiki.org/plugin:gitlabproject).
