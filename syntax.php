@@ -150,7 +150,7 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
 
     function renderProjectError($renderer, $data) {
         // Renderer
-        $img_url = 'lib/plugins/gitlabproject/images/gitlab.png';
+        $img_url = DOKU_URL . 'lib/plugins/gitlabproject/images/gitlab.png';
         $renderer->doc .= '<div class="gitlab">';
         $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
         $renderer->doc .= '<b class="gitlab">'.$this->getLang('gitlab.project').'</b><br>';
