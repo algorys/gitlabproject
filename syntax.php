@@ -163,6 +163,6 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
         $date_exploded = explode('T', $activity_time);
         $time_exploded = explode('Z', $date_exploded[1]);
 
-        return ['date' => $date_exploded[0], 'time' => substr($time_exploded[0], 0, -4)];
+        return array('date' => $date_exploded[0], 'time' => substr($time_exploded[0], 0, -4));
     }
 }
