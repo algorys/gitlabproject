@@ -53,7 +53,7 @@ Say that you've the following json file:
     "second": {
         "url": "http://my-second-gitlab.com",
         "api_token": "a1a1a1a1a1a11a1a"
-    }
+    },
     "third": {
         "url": "http://my-third-gitlab.com",
         "api_token": "b2b2b2b2b2b222b2"
