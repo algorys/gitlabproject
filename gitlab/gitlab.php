@@ -47,9 +47,11 @@ class DokuwikiGitlab {
 
     function getProjectMembers($kind, $unwanted_members) {
         // Define url requests for 'user' and 'group'
-        $user_url_request = $this->getAPIUrl().'projects/'.urlencode($this->dw_data['project']).'/members/?private_token='.$this->dw_data['token'];
+        $user_url_request = $this->getAPIUrl().'projects/'.urlencode((string)$this->dw_data['project']).'/members/?private_token='.$this->dw_data['token'];
 
-        $namespace = explode('/', $this->dw_data['project'])[0];
+        $namespace_array = explode('/', $this->dw_data['project']);
+        // Assign var Array after for PHP < 5.4
+        $namespace = $namespace_array[0];
         $group_url_request = $this->getAPIUrl().'groups/'.urlencode($namespace).'/members/?private_token='.$this->dw_data['token'];
 
         // Get members and merge them if needed
@@ -69,8 +71,10 @@ class DokuwikiGitlab {
         foreach ($unwanted_members as $unwanted_key => $unwanted_member) {
             if (is_array($members) && !empty($members)) {
                 foreach ($members as $key => $member) {
-                    if($member['username'] == trim($unwanted_member)) {
-                        unset($members[$key]);
+                    if(isset($member['username'])) {
+                        if($member['username'] == trim($unwanted_member)) {
+                            unset($members[$key]);
+                        }
                     }
                 }
             }
