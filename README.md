@@ -1,6 +1,6 @@
 # Plugin Gitlab-Project
 
-Plugin Gitlab-Project display a Gitlab project inside Dokuwiki. This version use Gitlab RestAPI v4 and list files in project repo with first-level subdirs. All listed files except binaries are viewable in HTML 'details' spoiler.
+Plugin Gitlab-Project display a Gitlab project inside Dokuwiki. This version use Gitlab RestAPI v4 and list files of project repo with first-level subdirs. All listed files except binaries are viewable in HTML 'details' spoiler inside Dokuwiki page.
 
 ## Requirements
 
