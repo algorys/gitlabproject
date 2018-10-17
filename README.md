@@ -1,14 +1,14 @@
 # Plugin Gitlab-Project
 
-Plugin Gitlab-Project display a Gitlab project inside Dokuwiki. This version use Gitlab RestAPI v4 and list files of project repo with first-level subdirs. All listed files except binaries are viewable in HTML 'details' spoiler inside Dokuwiki page.
+Plugin Gitlab-Project display a Gitlab project inside Dokuwiki.
 
 ## Requirements
 
-php<ver>-curl. Sometimes not installed by default
+This plugin does not need any requirements.
 
 ## Install
 
-Download Gitlab Project into your `${dokuwiki_root}/lib/plugins` folder and restart dokuwiki.
+Download Gitlab Project into your `${dokuwiki_root}/lib/plugins` folder and restart dokuwiki or use the Extension Manager.
 
 ## Configuration
 
@@ -37,20 +37,7 @@ For e.g., if you have a project available at `http://my-gitlab/foo/bar`, the syn
 ```php
 <gitlab project="foo/bar" />
 ```
-### Sample
-```
-%GitLab_Image% %project_name%
-Namespace:
-%namespace%
-Last activity:
-%date_and_time%
-Members:
-%list members with rights%
-Files:
-dir/
-%file_1%
-%file_2%
-```
+
 ### Override Server and Token
 
 Inside the root of the plugin, you will have a JSON file called: `server.json`. Inside you can add other servers and their tokens, than the one defined in the plugin settings.
@@ -66,7 +53,7 @@ Say that you've the following json file:
     "second": {
         "url": "http://my-second-gitlab.com",
         "api_token": "a1a1a1a1a1a11a1a"
-    },
+    }
     "third": {
         "url": "http://my-third-gitlab.com",
         "api_token": "b2b2b2b2b2b222b2"
