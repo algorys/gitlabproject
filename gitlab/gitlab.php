@@ -14,7 +14,7 @@ class DokuwikiGitlab {
     }
 
     function getAPIUrl() {
-        return $this->dw_data['server'] . '/api/v4/';
+        return $this->dw_data['server'] . '/api/v3/';
     }
 
     function gitlabRequest($url) {
@@ -33,57 +33,24 @@ class DokuwikiGitlab {
         return $answer_decoded;
     }
 
-    function gitRawRequest($url) {
-	curl_setopt($this->client, CURLOPT_URL, $url);
-	curl_setopt($this->client, CURLOPT_HTTPHEADER, array(
-	    'Content-Type: application/json',
-	    'Accept: application/json'
-	));
-	curl_setopt($this->client, CURLOPT_SSL_VERIFYHOST, '1');
-	curl_setopt($this->client, CURLOPT_SSL_VERIFYPEER, '0');
-	curl_setopt($this->client, CURLOPT_RETURNTRANSFER, true);
-
-	$answer = curl_exec($this->client);
-	
-	return $answer;
-    }
-    
     function closeClient(){
         curl_close($this->client);
     }
 
     function getProject() {
-        $url_request = $this->getAPIUrl().'projects/'.urlencode($this->dw_data['project']).'?private_token='.$this->dw_data['token'];
+        $url_request = $this->getAPIUrl().'projects/'.urlencode($this->dw_data['project']).'/?private_token='.$this->dw_data['token'];
 
         $project = $this->gitlabRequest($url_request);
 
         return $project;
     }
 
-	function getRepoTree($dir) {
-		// Get filelist as a tree of repository
-		$tree_url_request = $this->getAPIUrl().'projects/'.urlencode((string)$this->dw_data['project']).'/repository/tree?path='.$dir.'&private_token='.$this->dw_data['token'];
-		$files = $this->gitlabRequest($tree_url_request);
-		return $files;
-	}
-	
-	function getRawFile($path) {
-		
-		$raw_url_request = $this->getAPIUrl().'projects/'.urlencode((string)$this->dw_data['project']).'/repository/files/'.$path.'/raw?ref=master&private_token='.$this->dw_data['token'];
-		$file_content = $this->gitRawRequest($raw_url_request);
-		//$file_content = ;
-		return $file_content;
-		
-	}
-	
     function getProjectMembers($kind, $unwanted_members) {
         // Define url requests for 'user' and 'group'
-        $user_url_request = $this->getAPIUrl().'projects/'.urlencode((string)$this->dw_data['project']).'/members/all?private_token='.$this->dw_data['token'];
+        $user_url_request = $this->getAPIUrl().'projects/'.urlencode($this->dw_data['project']).'/members/?private_token='.$this->dw_data['token'];
 
-        $namespace_array = explode('/', $this->dw_data['project']);
-        // Assign var Array after for PHP < 5.4
-        $namespace = $namespace_array[0];
-        $group_url_request = $this->getAPIUrl().'groups/'.urlencode($namespace).'/members/all?private_token='.$this->dw_data['token'];
+        $namespace = explode('/', $this->dw_data['project'])[0];
+        $group_url_request = $this->getAPIUrl().'groups/'.urlencode($namespace).'/members/?private_token='.$this->dw_data['token'];
 
         // Get members and merge them if needed
         $user_members = $this->gitlabRequest($user_url_request);
@@ -102,10 +69,8 @@ class DokuwikiGitlab {
         foreach ($unwanted_members as $unwanted_key => $unwanted_member) {
             if (is_array($members) && !empty($members)) {
                 foreach ($members as $key => $member) {
-                    if(isset($member['username'])) {
-                        if($member['username'] == trim($unwanted_member)) {
-                            unset($members[$key]);
-                        }
+                    if($member['username'] == trim($unwanted_member)) {
+                        unset($members[$key]);
                     }
                 }
             }
@@ -116,11 +81,11 @@ class DokuwikiGitlab {
 
     function getRoleName($role_nb) {
         $roles = array(
-            10 => 'Guest',
-            20 => 'Reporter',
-            30 => 'Developer',
-            40 => 'Master',
-            50 => 'Owner'
+            10 => Guest,
+            20 => Reporter,
+            30 => Developer,
+            40 => Master,
+            50 => Owner
         );
         return $roles[$role_nb];
     }
