@@ -123,24 +123,57 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
             return array('state'=>$state, 'bytepos_end' => $pos + strlen($match));
         }
         
+	// Files
+	$files = $gitlab->getRepoTree('');
+		
         $img_url = DOKU_URL . 'lib/plugins/gitlabproject/images/gitlab.png';
 
         // Renderer
         $renderer->doc .= '<div class="gitlab">';
         $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
-        $renderer->doc .= '<b class="gitlab">'.$this->getLang('gitlab.project').'</b><br>';
-        $renderer->doc .= '<hr class="gitlab">';
-        $renderer->doc .= '<a href="'.$project_url.'" class="gitlab">'.$project_name.'</a>';
-        $renderer->doc .= ' - <b>Namespace:</b> <a href="'.$data['server'].'/'.$namespace.'"> '.$namespace.'</a>';
-        $renderer->doc .= '<p><b>'.$this->getLang('gitlab.activity').':</b> '.$date_time['date'].' - '.$date_time['time'].'</p>';
-        $renderer->doc .= '<p><b>'.$this->getLang('gitlab.members').':</b>';
+	$renderer->doc .= '<b class="gitlab"><a href="'.$project_url.'" class="gitlab">'.$project_name.'</a></b></br>';
+	$renderer->doc .= '<hr class="gitlab">';
+        $renderer->doc .= '<h3>Namespace:</h3> <a href="'.$data['server'].'/'.$namespace.'"> '.$namespace.'</a>';
+        $renderer->doc .= '<p><h3>'.$this->getLang('gitlab.activity').':</h3> '.$date_time['date'].' - '.$date_time['time'].'</p>';
+        $renderer->doc .= '<p><h3>'.$this->getLang('gitlab.members').':</h3>';
         $total_members = count($members);
-        $i = 0;
+	$total_files = count($files);
+	$i = 0;
+	$i2 = 0;
         foreach ($members as $key => $member) {
             $i++;
             $renderer->doc .= ' <a href="'.$member['web_url'].'">'.$member['username'].'</a> ';
             $renderer->doc .= '('.$gitlab->getRoleName($member['access_level']).')';
             if ($i != $total_members) $renderer->doc .= ',';
+        }
+	$renderer->doc .= '</p>';
+	$renderer->doc .= '<p><h3>Files:</h3>';
+	foreach ($files as $key => $file) {
+            $i2++;
+	    if ($file['type'] != 'tree') {
+		$renderer->doc .= '<details>';
+		$renderer->doc .= '<summary>'.$file['name'].'</summary>';
+		$renderer->doc .='<pre>';
+	    	$renderer->doc .=$gitlab->getRawFile($file['path']);
+	    	$renderer->doc .='</pre></details>';
+	}
+	    else {
+		$subfiles = $gitlab->getRepoTree($file['path']);
+		$renderer->doc .= '<details>';
+		$renderer->doc .= '<summary><b>'.$file['name'].'/</b></summary>';
+		foreach ($subfiles as $key => $subfile) {
+			$renderer->doc .= '<div style="margin-left: 25px; margin-top: 10px"><details>';
+			$renderer->doc .= '<summary>'.$subfile['name'].'</summary>';
+			if (substr($subfile['name'],-3,3) != 'exe') {
+				$renderer->doc .='<pre>'.$gitlab->getRawFile($subfile['path']).'</pre>';
+			}
+			else {
+				$renderer->doc .='<pre>This is a binary file</pre>';
+			}
+			$renderer->doc .= '</details></div>';
+		}
+		$renderer->doc .= '</details>';
+	}
         }
         $renderer->doc .= '</p>';
         $renderer->doc .= '</div>';
@@ -163,6 +196,6 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
         $date_exploded = explode('T', $activity_time);
         $time_exploded = explode('Z', $date_exploded[1]);
 
-        return ['date' => $date_exploded[0], 'time' => substr($time_exploded[0], 0, -4)];
+        return array('date' => $date_exploded[0], 'time' => substr($time_exploded[0], 0, -4));
     }
 }
