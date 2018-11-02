@@ -1,7 +1,12 @@
 <?php
-/*
+
+/**
+ * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ *
  * Settings language file
+ *
+ * @author IntenseX Performance Enhancer <martakorner@t-online.de>
  */
-$lang['server.default'] = 'Add your Gitlab serveur url, without the slash ending. E.g.: http://my-gitlab.com';
-$lang['token.default'] = 'A valid token who has access to all projects.';
-$lang['unwanted.users'] = 'If you do not want to show some users of your projects, add them here, separated by commas.';
+$lang['server.default']        = 'https://intensex.org.uk/';
+$lang['token.default']         = 'Marta';
+$lang['unwanted.users']        = '1977';
