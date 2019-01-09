@@ -85,11 +85,11 @@ class DokuwikiGitlab {
 
     function getRoleName($role_nb) {
         $roles = array(
-            10 => Guest,
-            20 => Reporter,
-            30 => Developer,
-            40 => Master,
-            50 => Owner
+            10 => "Guest",
+            20 => "Reporter",
+            30 => "Developer",
+            40 => "Master",
+            50 => "Owner"
         );
         return $roles[$role_nb];
     }
