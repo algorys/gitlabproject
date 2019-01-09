@@ -4,7 +4,11 @@ Plugin Gitlab-Project display a Gitlab project inside Dokuwiki.
 
 ## Requirements
 
-This plugin does not need any requirements.
+The curl library for PHP is required:
+
+```
+sudo apt install php-curl
+```
 
 ## Install
 
