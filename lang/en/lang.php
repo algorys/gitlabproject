@@ -7,6 +7,9 @@ $lang['encoding']   = 'utf-8';
 $lang['direction']  = 'ltr';
 
 $lang['gitlab.project'] = 'Gitlab Project';
+$lang['gitlab.repos'] = 'Repository';
+$lang['gitlab.history'] = 'History';
+$lang['gitlab.findfile'] = 'Find file';
 $lang['gitlab.activity'] = 'Last activity';
 $lang['gitlab.members'] = 'Members';
 

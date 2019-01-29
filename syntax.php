@@ -135,17 +135,17 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
         // -------- Renderer --------
 	$renderer->doc .= '<div class="gitlab">'; // Main container
 	// Project title
-	$renderer->doc .= '<div><h3 id="title-'.$namespace.'-'.$project['name'].'">';
+	$renderer->doc .= '<div><h4 id="title-'.$namespace.'-'.$project['name'].'">';
         $renderer->doc .= '<img src="'.$img_url.'" class="gitlab">';
         $renderer->doc .= '<a href="'.$project['web_url'].'" class="gitlab" target="_blank">'.$namespace.' <span class="separator">&gt;</span> '.$project['name'].'</a>';
-	$renderer->doc .= '</h3></div>';
+	$renderer->doc .= '</h4></div>';
 	$renderer->doc .= '<hr class="gitlab">';
 	// Project actions
-	$renderer->doc .= '<h4 id="actions-'.$namespace.'-'.$project['name'].'">Repository</h4>';
+	$renderer->doc .= '<h4 id="actions-'.$namespace.'-'.$project['name'].'">'.$this->getLang('gitlab.repos').'</h4>';
 	$renderer->doc .= '<div class="gitlab-actions">';
 	$renderer->doc .= '<a href="'.$project['web_url'].'/tree/'.$project['default_branch'].'" class="gitlab-btn" target="_blank">'.$project['default_branch'].'</a>';
-	$renderer->doc .= '<a href="'.$project['web_url'].'/commits/'.$project['default_branch'].'" class="gitlab-btn" target="_blank">History</a>';
-	$renderer->doc .= '<a href="'.$project['web_url'].'/find_file/'.$project['default_branch'].'" class="gitlab-btn" target="_blank">Find file</a>';
+	$renderer->doc .= '<a href="'.$project['web_url'].'/commits/'.$project['default_branch'].'" class="gitlab-btn" target="_blank">'.$this->getLang('gitlab.history').'</a>';
+	$renderer->doc .= '<a href="'.$project['web_url'].'/find_file/'.$project['default_branch'].'" class="gitlab-btn" target="_blank">'.$this->getLang('gitlab.findfile').'</a>';
 	$renderer->doc .= '</div>';
 	// Project members
 	$renderer->doc .= '<div>';
