@@ -7,6 +7,7 @@
 class DokuwikiGitlab {
     public $client;
     public $data;
+    private $project_id;
 
     function __construct($dw_data) {
         $this->dw_data = $dw_data;
@@ -40,14 +41,15 @@ class DokuwikiGitlab {
     function getProject() {
         $url_request = $this->getAPIUrl().'projects/'.urlencode($this->dw_data['project']).'/?private_token='.$this->dw_data['token'];
 
-        $project = $this->gitlabRequest($url_request);
+	$project = $this->gitlabRequest($url_request);
+	$this->project_id = $project['id'];
 
         return $project;
     }
 
     function getProjectMembers($kind, $unwanted_members) {
         // Define url requests for 'user' and 'group'
-        $user_url_request = $this->getAPIUrl().'projects/'.urlencode((string)$this->dw_data['project']).'/members/?private_token='.$this->dw_data['token'];
+        $user_url_request = $this->getAPIUrl().'projects/'.$this->project_id.'/members/?private_token='.$this->dw_data['token'];
 
         $namespace_array = explode('/', $this->dw_data['project']);
         // Assign var Array after for PHP < 5.4
