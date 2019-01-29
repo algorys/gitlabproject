@@ -111,6 +111,7 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
             $this->renderProjectError($renderer, $data);
             return array('state'=>$state, 'bytepos_end' => $pos + strlen($match));
         }
+	print_r($project);
         $date_time = $this->getDateTime($project['last_activity_at']);
         $namespace = $project['namespace']['name'];
 
@@ -122,18 +123,31 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
             $this->renderProjectError($renderer, $data);
             return array('state'=>$state, 'bytepos_end' => $pos + strlen($match));
         }
+	$img_url = DOKU_URL . 'lib/plugins/gitlabproject/images/gitlab.png';
         
-        $img_url = DOKU_URL . 'lib/plugins/gitlabproject/images/gitlab.png';
-
         // Renderer
         $renderer->doc .= '<div class="gitlab">';
+	$renderer->doc .= '<div class="gitlab-title">';
         $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
-        $renderer->doc .= '<b class="gitlab">'.$this->getLang('gitlab.project').'</b><br>';
+	$renderer->doc .= '<b class="gitlab">'.$this->getLang('gitlab.project').'</b><br>';
+	$renderer->doc .= '</div>';
         $renderer->doc .= '<hr class="gitlab">';
-        $renderer->doc .= '<a href="'.$project_url.'" class="gitlab">'.$project_name.'</a>';
-        $renderer->doc .= ' - <b>Namespace:</b> <a href="'.$data['server'].'/'.$namespace.'"> '.$namespace.'</a>';
+        $renderer->doc .= '<a href="'.$project_url.'" class="gitlab">'.$namespace.' <span class="separator">&gt;</span> '.$project_name.'</a>';
+
+	$renderer->doc .= '<div class="row commit-detail">';
+	$last_commit = $gitlab->getLastCommit();
+	$commit_date = new DateTime($last_commit['committed_date']);
+	$user = $gitlab->getUser($last_commit['committer_email']);
+	$renderer->doc .= '<div class="col-7">';
+        $renderer->doc .= '<b>'.$last_commit['title'].'</b><br>';
+	$renderer->doc .= '<span>'.$user['username'].' committed '.date_format($commit_date, 'Y-m-d - H:i:s').'</span>';
+	$renderer->doc .= '</div>';
+	$renderer->doc .= '<div class="col-3"><b>'.$last_commit['short_id'].'</b></div>';
+	$renderer->doc .= '</div>';
+
         $renderer->doc .= '<p><b>'.$this->getLang('gitlab.activity').':</b> '.$date_time['date'].' - '.$date_time['time'].'</p>';
         $renderer->doc .= '<p><b>'.$this->getLang('gitlab.members').':</b>';
+
         $total_members = count($members);
         $i = 0;
         foreach ($members as $key => $member) {

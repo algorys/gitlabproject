@@ -14,7 +14,7 @@ class DokuwikiGitlab {
     }
 
     function getAPIUrl() {
-        return $this->dw_data['server'] . '/api/v3/';
+        return $this->dw_data['server'] . '/api/v4/';
     }
 
     function gitlabRequest($url) {
@@ -81,6 +81,21 @@ class DokuwikiGitlab {
         }
 
         return $members;
+    }
+
+    function getLastCommit() {
+        $url_request = $this->getAPIUrl().'projects/'.$this->project_id.'/repository/commits/HEAD?private_token='.$this->dw_data['token'];
+	$last_commit = $this->gitlabRequest($url_request);
+//	print_r($last_commit);
+
+        return $last_commit;
+    }
+
+    function getUser($user_id) {
+	$url_request = $this->getAPIUrl().'users?search='.$user_id.'&private_token='.$this->dw_data['token'];
+        $user = $this->gitlabRequest($url_request);
+	//print_r($user[0]);
+        return $user[0];
     }
 
     function getRoleName($role_nb) {
