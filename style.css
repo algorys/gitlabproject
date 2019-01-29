@@ -3,20 +3,32 @@ div.gitlab {
     padding: 0.5em; 
 }
 
-div.gitlab-title {
-    background-color: #2a2a2a;
-    padding: 0.5em;
-    color: white;
+div.gitlab-actions {
+    margin: .5em;
+    padding: .2em;
 }
 
-div.col-7 {
-    float: left;
-    width: 70%;
+div.members {
+    margin: .5em;
+    padding: .2em;
 }
 
-div.col-3 {
+div.column {
     float: left;
-    width: 30%;
+    padding: 10px;
+    max-height: 28px;
+}
+
+div.col-left {
+    width: auto;
+}
+
+div.col-middle {
+    width: 80%
+}
+
+div.col-right {
+    width: auto;
 }
 
 div.commit-detail {
@@ -24,7 +36,8 @@ div.commit-detail {
     border: 1px solid #e5e5e5;
     border-radius: 4px;
     margin: 0.5em;
-    padding: 0.5em;
+    padding: 0.2em;
+    height: 45px;
 }
 
 /* Clear floats after the columns */
@@ -52,10 +65,25 @@ img.gitlab {
     margin-right: 0.5em;
 }
 
+img.avatar {
+    border-radius: 50%;
+    border: 1px solid #f5f5f5;
+    width: 28px;
+    height: 28px;
+}
+
 a.gitlab {
-    font-size: 1.4em;
+    font-size: 1.2em;
 }
 
 b.gitlab {
     font-size: 1.2em;
+}
+
+a.gitlab-btn {
+    border: 1px solid #e5e5e5;
+    border-radius: 3px;
+    padding: 5px 16px;
+    margin-left: 0.2em;
+    text-decoration: none !important;
 }

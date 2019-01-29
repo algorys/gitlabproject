@@ -67,7 +67,14 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
                 preg_match("/project *= *(['\"])(.*?)\\1/", $match, $project);
                 if (count($project) != 0) {
                     $data['project'] = $project[2];
-                }
+		}
+
+		preg_match("/commits *= *(['\"])(.*?)\\1/", $match, $commits);
+                if (count($commits) != 0) {
+                    $data['commits'] = $commits[2];
+		} else {
+		    $data['commits'] = 0;
+		}
 
                 return $data;
             case DOKU_LEXER_UNMATCHED :
@@ -100,21 +107,15 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
     }
 
     function renderGitlab($renderer, $data) {
-        // Gitlab object
+        // -------- Gitlab Data --------
         $gitlab = new DokuwikiGitlab($data);
-
         // Project
         $project = $gitlab->getProject();
-        $project_url = $project['web_url'];
-        $project_name = $project['name'];
         if(empty($project)) {
             $this->renderProjectError($renderer, $data);
             return array('state'=>$state, 'bytepos_end' => $pos + strlen($match));
         }
-	print_r($project);
-        $date_time = $this->getDateTime($project['last_activity_at']);
         $namespace = $project['namespace']['name'];
-
         // Members
         $kind = $project['namespace']['kind'];
         $unwanted_members = $this->getConf('unwanted.users');
@@ -122,61 +123,91 @@ class syntax_plugin_gitlabproject extends DokuWiki_Syntax_Plugin {
         if(array_key_exists("message", $members)) {
             $this->renderProjectError($renderer, $data);
             return array('state'=>$state, 'bytepos_end' => $pos + strlen($match));
-        }
+	}
+	// Image
 	$img_url = DOKU_URL . 'lib/plugins/gitlabproject/images/gitlab.png';
-        
-        // Renderer
-        $renderer->doc .= '<div class="gitlab">';
-	$renderer->doc .= '<div class="gitlab-title">';
-        $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
-	$renderer->doc .= '<b class="gitlab">'.$this->getLang('gitlab.project').'</b><br>';
-	$renderer->doc .= '</div>';
-        $renderer->doc .= '<hr class="gitlab">';
-        $renderer->doc .= '<a href="'.$project_url.'" class="gitlab">'.$namespace.' <span class="separator">&gt;</span> '.$project_name.'</a>';
-
-	$renderer->doc .= '<div class="row commit-detail">';
-	$last_commit = $gitlab->getLastCommit();
+	// Commits
+        $last_commit = $gitlab->getLastCommit();
 	$commit_date = new DateTime($last_commit['committed_date']);
 	$user = $gitlab->getUser($last_commit['committer_email']);
-	$renderer->doc .= '<div class="col-7">';
-        $renderer->doc .= '<b>'.$last_commit['title'].'</b><br>';
-	$renderer->doc .= '<span>'.$user['username'].' committed '.date_format($commit_date, 'Y-m-d - H:i:s').'</span>';
-	$renderer->doc .= '</div>';
-	$renderer->doc .= '<div class="col-3"><b>'.$last_commit['short_id'].'</b></div>';
-	$renderer->doc .= '</div>';
+	$last_events = $gitlab->getLastEvents($data['commits']);
 
-        $renderer->doc .= '<p><b>'.$this->getLang('gitlab.activity').':</b> '.$date_time['date'].' - '.$date_time['time'].'</p>';
-        $renderer->doc .= '<p><b>'.$this->getLang('gitlab.members').':</b>';
-
+        // -------- Renderer --------
+	$renderer->doc .= '<div class="gitlab">'; // Main container
+	// Project title
+	$renderer->doc .= '<div><h3 id="title-'.$namespace.'-'.$project['name'].'">';
+        $renderer->doc .= '<img src="'.$img_url.'" class="gitlab">';
+        $renderer->doc .= '<a href="'.$project['web_url'].'" class="gitlab" target="_blank">'.$namespace.' <span class="separator">&gt;</span> '.$project['name'].'</a>';
+	$renderer->doc .= '</h3></div>';
+	$renderer->doc .= '<hr class="gitlab">';
+	// Project actions
+	$renderer->doc .= '<h4 id="actions-'.$namespace.'-'.$project['name'].'">Repository</h4>';
+	$renderer->doc .= '<div class="gitlab-actions">';
+	$renderer->doc .= '<a href="'.$project['web_url'].'/tree/'.$project['default_branch'].'" class="gitlab-btn" target="_blank">'.$project['default_branch'].'</a>';
+	$renderer->doc .= '<a href="'.$project['web_url'].'/commits/'.$project['default_branch'].'" class="gitlab-btn" target="_blank">History</a>';
+	$renderer->doc .= '<a href="'.$project['web_url'].'/find_file/'.$project['default_branch'].'" class="gitlab-btn" target="_blank">Find file</a>';
+	$renderer->doc .= '</div>';
+	// Project members
+	$renderer->doc .= '<div>';
+        $renderer->doc .= '<h4 id="members-'.$namespace.'-'.$project['name'].'">'.$this->getLang('gitlab.members').'</h4>';
+	$renderer->doc .= '<div class="members">';
         $total_members = count($members);
         $i = 0;
         foreach ($members as $key => $member) {
             $i++;
-            $renderer->doc .= ' <a href="'.$member['web_url'].'">'.$member['username'].'</a> ';
+            $renderer->doc .= ' <a href="'.$member['web_url'].'" target="_blank">'.$member['username'].'</a> ';
             $renderer->doc .= '('.$gitlab->getRoleName($member['access_level']).')';
             if ($i != $total_members) $renderer->doc .= ',';
         }
-        $renderer->doc .= '</p>';
-        $renderer->doc .= '</div>';
+        $renderer->doc .= '</div></div>';
 
+	if($data['commits'] > 0) {
+            $renderer->doc .= '<h4 id="events-'.$namespace.'-'.$project['name'].'">'.$this->getLang('gitlab.activity').'</h4>';
+	    foreach($last_events as $key => $event) {
+	        $short_sha = substr($event['push_data']['commit_to'], 0, 8);
+		$datetime = new DateTime($event['created_at']);
+		$event_date = $this->elapsed_time($datetime->getTimestamp());
+	        $renderer->doc .= '<div class="row commit-detail">';
+	        $renderer->doc .= '<div class="column col-left">';
+                $renderer->doc .= '<img src="'.$event['author']['avatar_url'].'" class="avatar" />';
+                $renderer->doc .= '</div>';
+                $renderer->doc .= '<div class="column col-middle">';
+                $renderer->doc .= '<b>'.$event['author']['username'].' '.$event['action_name'].' '.$event['push_data']['ref'].'</b><br>';
+                $renderer->doc .= '<span><a href="'.$event['author']['web_url'].'" target="_blank">'.$event['author']['username'].'</a> committed '.$event_date.'</span>';
+                $renderer->doc .= '</div>';
+                $renderer->doc .= '<div class="column col-right"><b><a href="'.$project['web_url'].'/commit/'.$event['push_data']['commit_to'].'" target="_blank">'.$short_sha.'</a></b></div>';
+                $renderer->doc .= '</div>';
+	     }
+	}
+
+        $renderer->doc .= '</div>'; // End of main container
         $gitlab->closeClient();
+    }
+
+    function elapsed_time($timestamp, $precision = 2) {
+        $time = time() - $timestamp;
+        $a = array('decade' => 315576000, 'year' => 31557600, 'month' => 2629800, 'week' => 604800, 'day' => 86400, 'hour' => 3600, 'min' => 60, 'sec' => 1);
+        $i = 0;
+        foreach($a as $k => $v) {
+            $$k = floor($time/$v);
+            if ($$k) $i++;
+            $time = $i >= $precision ? 0 : $time - $$k * $v;
+            $s = $$k > 1 ? 's' : '';
+            $$k = $$k ? $$k.' '.$k.$s.' ' : '';
+            @$result .= $$k;
+          }
+        return $result ? $result.'ago' : '1 sec to go';
     }
 
     function renderProjectError($renderer, $data) {
         // Renderer
         $img_url = DOKU_URL . 'lib/plugins/gitlabproject/images/gitlab.png';
+
         $renderer->doc .= '<div class="gitlab">';
         $renderer->doc .= '<span><img src="'.$img_url.'" class="gitlab"></span>';
         $renderer->doc .= '<b class="gitlab">'.$this->getLang('gitlab.project').'</b><br>';
         $renderer->doc .= '<hr class="gitlab">';
         $renderer->doc .= '<p>'.$this->getLang('gitlab.error').'</p>';
         $renderer->doc .= '</div>';
-    }
-
-    function getDateTime($activity_time) {
-        $date_exploded = explode('T', $activity_time);
-        $time_exploded = explode('Z', $date_exploded[1]);
-
-        return array('date' => $date_exploded[0], 'time' => substr($time_exploded[0], 0, -4));
     }
 }

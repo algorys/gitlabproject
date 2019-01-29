@@ -88,16 +88,23 @@ class DokuwikiGitlab {
     function getLastCommit() {
         $url_request = $this->getAPIUrl().'projects/'.$this->project_id.'/repository/commits/HEAD?private_token='.$this->dw_data['token'];
 	$last_commit = $this->gitlabRequest($url_request);
-//	print_r($last_commit);
 
         return $last_commit;
     }
 
     function getUser($user_id) {
 	$url_request = $this->getAPIUrl().'users?search='.$user_id.'&private_token='.$this->dw_data['token'];
-        $user = $this->gitlabRequest($url_request);
-	//print_r($user[0]);
+	$user = $this->gitlabRequest($url_request);
+
         return $user[0];
+    }
+
+    function getLastEvents($event_nb) {
+	$url_request = $this->getAPIUrl().'projects/'.$this->project_id.'/events?private_token='.$this->dw_data['token'];
+        $events = $this->gitlabRequest($url_request);
+	$wanted_events = array_slice($events, 0, $event_nb, true);
+
+	return $wanted_events;
     }
 
     function getRoleName($role_nb) {
