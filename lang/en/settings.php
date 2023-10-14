@@ -5,8 +5,9 @@
  *
  * Settings language file
  *
+ * @author humancoder.com <darcyamsel@gmail.com>
  * @author Aleksandr Selivanov <alexgearbox@yandex.ru>
  */
-$lang['server.default']        = 'Add your Gitlab server url, without the slash ending. E.g.: http://my-gitlab.com';
-$lang['token.default']         = 'A valid token who has access to all projects.';
-$lang['unwanted.users']        = 'If you do not want to show some users of your projects, add them here, separated by commas.';
+$lang['server.default']        = 'https://humancoder.com/';
+$lang['token.default']         = 'Darcy';
+$lang['unwanted.users']        = '1990';
